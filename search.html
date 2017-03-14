@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+    <head>
+        <meta charset="utf-8"/>
+        <title>
+            台北市政府各單位預算(beta版)
+        </title>
+        <link href="bootstrap.min.css" rel="stylesheet"/>
+        <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/css/select2.min.css" rel="stylesheet"/>
+        <style>
+            h1{
+        	text-align: center;
+        }
+            #control form label {
+			    float: left;
+			    line-height: 34px;
+			    width: 77px;
+			    margin: 0;
+			    margin-top: 6px;
+			}
+
+			#control {
+			    overflow: hidden;
+			}
+
+			#control form {
+			    width: 85%;
+			    height: auto;
+			    padding-bottom: 10px;
+			    overflow: hidden;
+			    margin: 0 auto;
+			}
+
+
+
+			#control .form-inline input.form-control, .form-inline select.form-control {
+			    float: left;
+			    width: calc(100%/3 - 77px - 17px);
+			    margin: 6px 15px 0 0;
+			}
+
+			#control .form-inline select.form-control+span {
+			    float: left;
+			    width: calc(100%/3 - 77px - 17px) !important;
+			    margin: 6px 15px 0 0;
+			    height: 34px;
+			}
+
+			#control .form-inline select.form-control+span>span>span {
+			    height: 34px;
+			}
+
+			#control .form-inline input[type="radio"].form-control {
+			    width: 50%;
+			}
+
+			button.send {
+			    width: 50%;
+			    margin: 0 auto;
+			    margin-top: 25px;
+			    font-size: 17px;
+			    display: block;
+			}
+
+			/*
+			表格公用配置
+			*/
+
+			table {
+			    width: 90%;
+			    margin: 0 auto;
+			    background-color: #fff;
+			    margin-bottom: 25px;
+			    border: 0;
+			    border-spacing: 0;
+			    text-align: center;
+			    vertical-align: middle;
+			    word-break: break-all;
+			    table-layout: fixed;
+			}
+
+			th {
+			    background-color: #e6eeee;
+			    font-size: 16px;
+			    line-height: 25px;
+			    font-weight: 700;
+			}
+
+			td {
+			    color: #3d3d3d;
+			    padding: 4px;
+			    background-color: #fff;
+			    font-size: 16px;
+			    line-height: 25px;
+			}
+
+
+			/*
+			報告搜尋區的結果列表
+			*/
+
+			#list th {
+			    border: 1px solid #fff;
+			    font-size: 18px;
+			    line-height: 45px;
+			}
+
+			#list tr.more{
+				height: 60px;
+				padding: 10px;
+				white-space: nowrap;
+				border-top: 1px #9E9E9E solid;
+			}
+
+			#list tr.more div span{
+				padding-left: 15px;
+			}
+
+			#list tbody tr td {
+			    background-color: #fff;
+			}
+
+			#list tbody:nth-of-type(2n+1) tr td{
+			    background-color: #C9E0F5;
+			}
+
+			#list td.office,
+			#list th.office {
+			    width: 7%;
+			}
+
+			#list td.srcid,
+			#list th.srcid {
+			    width: 7%;
+			}
+
+			#list td.account,#list td.obj,
+			#list th.account,#list th.obj {
+			    width: 7%;
+			}
+
+			#list td.use,#list td.statcd,
+			#list th.use,#list th.statcd {
+			    width: 7%;
+			}
+			#list td.sum,
+			#list th.sum {
+			    width: 12%;
+			}
+			#list td.note,
+			#list th.note {
+			    width: 40%;
+			}
+			#list td.page,
+			#list th.page {
+			    width: 7%;
+			}
+
+			#list td.add,
+			#list th.add {
+			    width: 6%;
+			}
+
+			/*
+			頁次控制區
+			*/
+
+			.page {
+			    width: 85%;
+			    height: 34px;
+			    margin: 0 auto;
+			    margin-top: 20px;
+			    margin-bottom: 20px;
+			    overflow: hidden;
+			    text-align: center;
+			    line-height: 34px;
+			}
+
+			.page>button:nth-of-type(1) {
+			    float: left;
+			    margin-left: 20%;
+			    width: 100px;
+			}
+
+			.page>button:nth-of-type(2) {
+			    float: right;
+			    margin-right: 20%;
+			    width: 100px;
+			}
+
+			.page span input {
+			    height: 26px;
+			    width: 55px;
+			    line-height: 20px;
+			}
+
+			.page span button {
+			    height: 26px;
+			    line-height: 13px;
+			    margin-left: 10px;
+			}
+
+			#sum{
+				position: fixed;
+				bottom: 0;
+				width: 100%;
+				height: 44px;
+				background-color: #7dec7d;
+				text-align: center;
+				vertical-align: middle;
+			}
+
+			#sum > span{
+			    font-size: 16px;
+    			line-height: 44px;
+    			margin: 10px;
+			}
+
+			#sum > button{
+				margin: 0 auto;
+				margin-top: 6px;
+				margin-bottom: 6px;
+			}
+
+			footer {
+			    width: 100%;
+			    height: auto;
+			    background-color: #444;
+			    margin-top: 25px;
+			    padding-bottom: 20px;
+			    text-align: center;
+			    color: #eee;
+			}
+
+			footer form {
+			    vertical-align: middle;
+			    overflow: hidden;
+			    margin: 0 auto;
+			    line-height: 24px;
+			    width: 75%;
+			    max-width: 1000px;
+			}
+
+			footer .form-inline input.form-control{
+				float: left;
+			    width: calc((100%/2) - 150px);
+			    margin: 6px 15px 0 0;
+			}
+
+			footer .form-inline textarea.form-control{
+			    width: 100%;
+			    margin: 6px 15px 0 0;
+				min-height: 200px;
+			}
+
+			footer .form-inline label {
+			    float: left;
+			    line-height: 34px;
+			    width: 120px;
+			    margin: 0;
+			    margin-top: 6px;
+			    padding: 0 10px 0 10px;
+			}
+
+			footer p{
+				padding: 20px;
+				font-size: 16px;
+				line-height: 26px;
+			}
+
+			footer p span{
+				padding-right: 20px;
+			}
+        </style>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js">
+        </script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/js/select2.full.min.js">
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.26/vue.min.js">
+        </script>
+        <script>
+            var page=1;
+            var max_page=1;
+            var start,end,load_start,load_end;
+            $(document).ready(function() {
+			    var _list=['office','obj','statcd','account','use'];
+			    for (var key in _list) {
+			        set_select2(_list[key]);
+			    }
+
+			    function set_select2(kind) {
+			        $('#'+kind).select2({
+			            placeholder: '',
+			            allowClear: true,
+			            ajax: {
+			                url: "option.php",
+			                dataType: 'json',
+			                delay: 250,
+			                data: function(params) {
+			                    return {
+			                        search: params.term, // search term
+			                        type: kind,
+			                        year: $("#year").val(),
+			                        kind: $("#kind").val()
+			                    };
+			                },
+			                processResults: function(data) {
+			                    // parse the results into the format expected by Select2.
+			                    // since we are using custom formatting functions we do not need to
+			                    // alter the remote JSON data
+			                    return {
+			                        results: data.data
+			                    };
+			                },
+			                cache: true
+			            }
+			        });
+			    }
+
+			    search();
+			});
+
+			//報告搜索
+			$(document).on("click", ".search .page > button:nth-of-type(1)", function() {
+			    page -= 1;
+			    search();
+			});
+
+			$(document).on("click", ".search .page > button:nth-of-type(2)", function() {
+			    page += 1;
+			    search();
+			});
+
+			$(document).on("click", ".search .page span button", function() {
+			    page = parseInt($(this).prev("input").val());
+			    if (page > max_page) {
+			        page = max_page;
+			    }
+			    if (page<1) {
+			    	page=1;
+			    }
+			    search();
+			});
+
+			$(document).on("keypress", ".search .page span input", function(e) {
+				if(e.keyCode == 13){
+					$(this).next("button").click();
+				}
+			});
+
+			$(document).on("keypress", "#control form input", function(e) {
+				if(e.keyCode == 13){
+					send();
+				}
+			});
+
+			$(document).on("change", "#type,#kind", function() {
+				$("#statcd,#obj,#account,#use").attr('disabled', false);
+
+			    if ($("#type").val()==='in' || $("#kind").val()==='attach') {			    	
+			    	$("#statcd,#obj").select2("val", "");
+			    	$("#statcd,#obj").attr('disabled', true);
+			    }else{
+			    	$("#statcd,#obj").attr('disabled', false);
+			    }
+
+			    if($("#type").val()==='in' || $("#kind").val()!=='attach'){
+			    	$("#use").select2("val", "");
+			    	$("#use").attr('disabled', true);
+			    }else{
+			    	$("#use").attr('disabled', false);
+			    }
+
+			    if ($("#kind").val()==='attach') {
+			    	$("#account").attr('disabled', false);
+			    }else{
+			    	$("#account").attr('disabled', true);
+			    	$("#account").select2("val", "");
+			    }
+			});
+
+			function feedback() {
+				if ( !( $("#feedback_tell").val().match(/^(\(?0\d\)?-?)?\d{4}-?\d{4}(#\d+)?$/) || $("#feedback_tell").val().match(/^09\d{2}-?\d{3}-?\d{3}$/) ) && $("#feedback_tell").val()) {
+					$("footer>button").text('請填寫正確聯絡電話');
+					return;
+				}
+				if ( !$("#feedback_email").val().match(/^\w+@([a-zA-Z_]+\.)+?[a-zA-Z]{2,3}$/) && $("#feedback_email").val()) {
+					$("footer>button").text('請填寫正確e-mail');
+					return;
+				}
+				if (!$("#feedback_tell").val() && !$("#feedback_email").val()) {
+					$("footer>button").text('電話、email至少擇一填寫');
+					return;
+				}
+				if (!$("#feedback_office").val() || !$("#feedback_name").val() || !$("#feedback_article").val()) {
+					$("footer>button").text('欄位請填寫完整');
+					return;
+				}
+				$("footer>button").text('傳送中');
+				$("footer>button").attr('disabled', true);
+				$.get('getdata/feedback.php',{
+					office:$("#feedback_office").val(),
+					name:$("#feedback_name").val(),
+					tell:$("#feedback_tell").val(),
+					email:$("#feedback_email").val(),
+					article:$("#feedback_article").val(),
+				});
+				$("footer>button").text('已傳送');
+				$("footer>button").attr('disabled', false);
+				setTimeout(function() {
+				    $("footer>button").text('送出');
+				    $("footer>form>input,footer>form>textarea").val('');
+				}, 1500);
+			}
+
+			function send() {
+				page=1;
+				search(1); 
+			}
+
+            function search(send) {
+
+            	if ($(document).scrollTop()!=0) {
+					$("html,body").animate({
+						scrollTop: 0
+					}, 500);
+            	}
+
+            	if (page*25<=load_end && (page-1)*25>=load_start && !send) {
+            		vue_list.start=(page-1)*25-load_start;
+            		vue_list.page=page;
+
+            		if (page <= 1) {
+			            $(".page button:nth-child(1)").attr('disabled', true);
+			        } else {
+			            $(".page button:nth-child(1)").attr('disabled', false);
+			        }
+			        if (page >= max_page) {
+			            $(".page button:nth-child(3)").attr('disabled', true);
+			        } else {
+			            $(".page button:nth-child(3)").attr('disabled', false);
+			        }
+            		return;
+            	}
+            	
+            	$(".page button:nth-child(1)").attr('disabled', true);
+				$(".page button:nth-child(3)").attr('disabled', true);
+				$(".search .page span button").attr('disabled', true);
+				$(".send").attr('disabled', true);
+				$.getJSON("api/search.php", {
+					year:$("#year").val(),
+					kind:$("#kind").val(),
+					type:$("#type").val(),
+					committee:$("#committee").val(),
+					office:$("#office").val(),
+					obj:$("#obj").val(),
+					statcd:$("#statcd").val(),
+					account:$("#account").val(),
+					use:$("#use").val(),
+					note:$("#note").val(),
+					sum_min:$("#sum_min").val(),
+					sum_max:$("#sum_max").val(),
+					order:$("#order").val(),
+					page:page
+				}, function(json) {
+					$(".page button:nth-child(1)").attr('disabled', false);
+					$(".page button:nth-child(3)").attr('disabled', false);
+					$(".search .page span button").attr('disabled', false);
+					$(".send").attr('disabled', false);
+
+			        max_page = json.summary.max_page;
+			        if (page <= 1) {
+			            $(".page button:nth-child(1)").attr('disabled', true);
+			        } else {
+			            $(".page button:nth-child(1)").attr('disabled', false);
+			        }
+			        if (page >= max_page) {
+			            $(".page button:nth-child(3)").attr('disabled', true);
+			        } else {
+			            $(".page button:nth-child(3)").attr('disabled', false);
+			        }
+
+			        vue_list.page=page;
+			        vue_list.max_page=max_page;
+			        vue_list.rows=json.data;
+
+            		load_start=(page-1)*25;
+            		vue_list.start=(page-1)*25-load_start;
+
+				    vue_list.attach = $("#kind").val()==='attach' ? true : false;
+				    vue_list.out = $("#type").val()==='out' ? true : false;
+
+            		json.summary.count<(page-1)*25+500 ? load_end=Math.ceil(json.summary.count/25)*25 : load_end=(page-1)*25+500;
+				});
+			}
+
+			Vue.filter('currencyFormat', function (value) {
+				return (value+'').replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+			});
+        </script>
+    </head>
+    <body>
+        <h1>
+            台北市政府各單位預算(beta版)(調整中，可能出現異常)
+        </h1>
+        <div id="control">
+            <form class="form-inline">
+                <label for="year">
+                    年分
+                </label>
+                <select class="form-control" id="year">
+                    <option value="106">
+                        106年度
+                    </option>
+                    <option value="105">
+                        105年度
+                    </option>
+                    <option value="104">
+                        104年度
+                    </option>
+                    <option value="103">
+                        103年度
+                    </option>
+                    <option value="102">
+                        102年度
+                    </option>
+                    <option value="101">
+                        101年度
+                    </option>
+                    <option value="100">
+                        100年度
+                    </option>
+                </select>
+                <label for="kind">
+                    類型
+                </label>
+                <select class="form-control" id="kind">
+                    <option value="normal">
+                        一般預算
+                    </option>
+                    <option value="plus">
+                        追加預算
+                    </option>
+                    <option value="attach">
+                        附屬單位預算
+                    </option>
+                </select>
+                <label for="type">
+                    收入/支出
+                </label>
+                <select class="form-control" id="type">
+                    <option value="out">
+                        支出
+                    </option>
+                    <option value="in">
+                        收入
+                    </option>
+                </select>
+                <label for="committee">
+                    委員會
+                </label>
+                <select class="form-control" id="committee">
+                	<option value="" selected>
+                        未選擇
+                    </option>
+                    <option value="1">
+                        民政委員會
+                    </option>
+                    <option value="2">
+                        財政建設委員會
+                    </option>
+                    <option value="3">
+                        教育委員會
+                    </option>
+                    <option value="4">
+                        交通委員會
+                    </option>
+                    <option value="2">
+                        警政衛生委員會
+                    </option>
+                    <option value="2">
+                        工務委員會
+                    </option>
+                </select>
+                <label for="office">
+                    機關
+                </label>
+                <select class="form-control" id="office">
+                </select>
+                <label for="obj">
+                    類別
+                </label>
+                <select class="form-control" id="obj">
+                </select>
+                <label for="statcd">
+                    下位類別
+                </label>
+                <select class="form-control" id="statcd">
+                </select>
+                <label for="account">
+                    會計類別
+                </label>
+                <select class="form-control" disabled="true" id="account">
+                </select>
+                <label for="use">
+                    支出類別
+                </label>
+                <select class="form-control" disabled="true" id="use">
+                </select>
+                <label for="note">
+                    預算簡介
+                </label>
+                <input class="form-control" id="note" type="text"/>
+                <label for="sum_max">
+                    預算上限
+                </label>
+                <input class="form-control" id="sum_max" type="number"/>
+                <label for="sum_min">
+                    預算下限
+                </label>
+                <input class="form-control" id="sum_min" type="number"/>
+                <label for="order">
+                    排序
+                </label>
+                <select class="form-control" id="order">
+                    <option value="DESC">
+                        金額由大到小
+                    </option>
+                    <option value="ASC">
+                        金額由小到大
+                    </option>
+                </select>
+            </form>
+            <button class="send btn btn-success" onclick="send()">
+                查詢
+            </button>
+        </div>
+        <div class="search" id="search">
+            <div class="page">
+                <button class="btn btn-info">
+                    上一頁
+                </button>
+                <span>
+                    第
+                    <input min="1" type="number" v-bind:max="max_page" v-bind:value="page"/>
+                    頁/共{{max_page}}頁
+                    <button class="btn btn-primary">
+                        GO
+                    </button>
+                </span>
+                <button class="btn btn-info">
+                    下一頁
+                </button>
+            </div>
+            <table id="list">
+                <thead>
+                    <tr>
+                    	<th class="add">
+                            加入<br/>總計
+                        </th>
+                        <th class="office">
+                            機關
+                        </th>
+                        <th class="srcid" v-if="!attach">
+                            分支項目
+                        </th>
+                        <th class="account" v-if="attach">
+                            會計<br/>類別
+                        </th>
+                        <th class="obj" v-if="!attach && out">
+                            類別
+                        </th>
+                        <th class="use" v-if="attach && out">
+                            支出
+                            <br/>
+                            類別
+                        </th>
+                        <th class="statcd" v-if="!attach && out">
+                            下位<br/>類別
+                        </th>
+                        <th class="sum">
+                            預算
+                        </th>
+                        <th class="note">
+                            簡介
+                        </th>
+                        <th class="page">
+                            頁碼
+                        </th>
+                    </tr>
+                </thead>
+                <tbody is="list-item" v-for="row in rows | limitBy 25 start">
+                    <tr class="normal">
+                    	<td class="add">
+                    		<button v-if="!in_sum(row.id)" v-on:click="add(row)" class="btn btn-default">加入</button>
+                    		<button v-else v-on:click="remove(row.id)" class="btn btn-default">移除</button>
+                        </td>
+                        <td class="office">
+                            {{row.office}}
+                        </td>
+                        <td class="srcid" v-if="!attach">
+                            {{row.srcid}}
+                        </td>
+                        <td class="account" v-if="attach">
+                            {{row.account}}
+                        </td>
+                        <td class="obj" v-if="!attach && out">
+                            {{row.obj}}
+                        </td>
+                        <td class="use" v-if="attach && out">
+                            {{row.use}}
+                        </td>
+                        <td class="statcd" v-if="!attach && out">
+                            {{row.statcd}}
+                        </td>
+                        <td class="sum">
+                            {{row.sum | currencyFormat}}
+                        </td>
+                        <td class="page">
+                            {{row.note}}
+                        </td>
+                        <td class="more">
+                            {{row.page}}
+                        </td>
+                    </tr>
+                    <tr class="more">
+                        <td v-bind:colspan="colspan">
+                            <div>
+                                <span>
+                                    單位：{{row.unit}}
+                                </span>
+                                <span>
+                                    數量：{{row.number}}
+                                </span>
+                                <span>
+                                    單價：{{row.unitprice | currencyFormat}}
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="page">
+                <button class="btn btn-info">
+                    上一頁
+                </button>
+                <span>
+                    第
+                    <input min="1" type="number" v-bind:max="max_page" v-bind:value="page"/>
+                    頁/共{{max_page}}頁
+                    <button class="btn btn-primary">
+                        GO
+                    </button>
+                </span>
+                <button class="btn btn-info">
+                    下一頁
+                </button>
+            </div>
+            <div id="sum">
+            	<span>總金額：{{sum | currencyFormat}}元</span><span>相當於{{unit_sum}}</span><span>總筆數：{{sum_list.length}}筆</span><span><button class="btn btn-danger" v-on:click="clear_sum">清除</button></span>
+            </div>
+        </div>
+        <footer>
+            <form class="form-inline">
+                <h2>
+                    系統意見回饋
+                </h2>
+                <label for="feedback_office">
+                    議員研究室
+                </label>
+                <input class="form-control" id="feedback_office" type="text"/>
+                <label for="feedback_name">
+                    稱謂
+                </label>
+                <input class="form-control" id="feedback_name" type="text"/>
+                <label for="feedback_contact">
+                    聯絡電話
+                </label>
+                <input class="form-control" id="feedback_tell" placeholder="02-2918-3343#3721 or 0920-830-421" type="text"/>
+                <label for="feedback_contact">
+                    電子郵件
+                </label>
+                <input class="form-control" id="feedback_email" type="text"/>
+                <label for="feedback_article">
+                    回覆內容
+                </label>
+                <textarea class="form-control" id="feedback_article">
+                </textarea>
+            </form>
+            <button class="send btn btn-success" onclick="feedback()">
+                送出
+            </button>
+            <p>
+                聯絡方式
+                <br/>
+                <span>
+                    手機：0912465666
+                </span>
+                <span>
+                    e-mail：jjtw0307@gmail.com
+                </span>
+                <span>
+                    facebook：
+                    <a href="https://www.facebook.com/tigerrayson">
+                        丁新一
+                    </a>
+                </span>
+                <span>
+                    紀冠廷
+                </span>
+            </p>
+        </footer>
+        <script>
+            var vue_list = new Vue({
+				el: '#search',
+				data: {
+					rows: [],
+					page:'',
+					max_page:'',
+					start:'',
+					attach:false,
+					plus:false,
+					normal:true,
+					out:true,
+					sum_list:[]
+				},
+				computed: {
+					colspan:function () {
+						if (!this.out) {
+							return 6;
+						}else if (this.attach && this.out) {
+							return 7;
+						}else if (!this.attach && this.out) {
+							return 8;
+						}
+					},
+					sum:function () {
+						var sum=0;
+						for (var i = 0; i < this.sum_list.length; i++) {
+							sum+=parseInt(this.sum_list[i].sum);
+						}
+						return sum;
+					},
+					unit_sum:function () {
+						var sum=this.sum;
+						var unit='';
+						var type=Math.random();
+						if (type>=0.75) {
+							unit=(sum/812700799).toFixed(3)+'份議會歲出預算(2016年)';
+						}else if (type>0.5) {
+							unit=(sum/3240000).toFixed(3)+'間議員辦公室助理補助費(每年)';
+						}else if (type>0.25) {
+							unit=(sum/1710113).toFixed(3)+'位議員年薪(法令研究費)';
+						}else{
+							unit=(sum/150000).toFixed(3)+'份議員議員出國考察補助(每年)';
+						}
+						return unit;
+					}
+				},
+				methods: {
+					add:function (row) {
+						this.sum_list.push(row);
+					},
+					remove:function (id) {
+						for (var i = 0; i < this.sum_list.length; i++) {
+					        if (this.sum_list[i].id==id) {
+					            this.sum_list.splice(i,1);
+					            i--;
+					        }
+					    }
+					},
+					in_sum:function (id) {
+						for (var i = 0; i < this.sum_list.length; i++) {
+					        if (this.sum_list[i].id==id) {
+					            return true;
+					        }
+					    }
+						return false;
+					},
+					clear_sum:function () {
+						this.sum_list=[];
+					}
+				}
+			});
+
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+			})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+			 ga('create', 'UA-82502123-2', 'auto');
+			 ga('send', 'pageview');
+        </script>
+    </body>
+</html>
